@@ -1,0 +1,24 @@
+services:
+
+  desafio-api:
+    build:
+      context: .          # raiz onde está o Dockerfile
+      dockerfile: Dockerfile
+    container_name: desafio-api
+    ports:
+      - "8080:8080"       # API REST
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:h2:mem:cupon
+      SPRING_DATASOURCE_USERNAME: sa
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.h2.Driver
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.H2Dialect
+      SPRING_H2_CONSOLE_ENABLED: "true"
+      SPRING_H2_CONSOLE_PATH: /h2-console
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s   # tempo para o Spring Boot subir
+    restart: unless-stopped
